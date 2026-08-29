@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>🎮 Mis Juegos</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
@@ -85,10 +88,10 @@
 
 <main>
   <div class="section-label">Juegos disponibles</div>
-  <div class="games-grid">
+  <div class="games-grid" id="grid">
 
     <!-- DODGE THE BALLS -->
-    <a class="card" href="dodge-the-balls.html">
+    <a class="card" id="link-dodge" href="dodge-the-balls.html">
       <div class="thumb" style="background:#0d0d1a;">
         <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
           <g stroke="rgba(255,255,255,0.04)" stroke-width="1">
@@ -97,15 +100,11 @@
             <line x1="64" y1="0" x2="64" y2="180"/><line x1="128" y1="0" x2="128" y2="180"/>
             <line x1="192" y1="0" x2="192" y2="180"/><line x1="256" y1="0" x2="256" y2="180"/>
           </g>
-          <circle cx="80" cy="60" r="30" fill="#e74c3c" opacity="0.22"/>
-          <circle cx="240" cy="50" r="24" fill="#3498db" opacity="0.22"/>
-          <circle cx="60" cy="130" r="22" fill="#f39c12" opacity="0.22"/>
-          <circle cx="200" cy="140" r="28" fill="#9b59b6" opacity="0.22"/>
+          <circle cx="80" cy="60" r="30" fill="#e74c3c" opacity="0.22"/><circle cx="240" cy="50" r="24" fill="#3498db" opacity="0.22"/>
+          <circle cx="60" cy="130" r="22" fill="#f39c12" opacity="0.22"/><circle cx="200" cy="140" r="28" fill="#9b59b6" opacity="0.22"/>
           <circle cx="280" cy="100" r="20" fill="#1abc9c" opacity="0.22"/>
-          <circle cx="80" cy="60" r="18" fill="#e74c3c"/>
-          <circle cx="240" cy="50" r="15" fill="#3498db"/>
-          <circle cx="60" cy="130" r="14" fill="#f39c12"/>
-          <circle cx="200" cy="140" r="17" fill="#9b59b6"/>
+          <circle cx="80" cy="60" r="18" fill="#e74c3c"/><circle cx="240" cy="50" r="15" fill="#3498db"/>
+          <circle cx="60" cy="130" r="14" fill="#f39c12"/><circle cx="200" cy="140" r="17" fill="#9b59b6"/>
           <circle cx="280" cy="100" r="13" fill="#1abc9c"/>
           <circle cx="160" cy="90" r="22" fill="#00ff88" opacity="0.2"/>
           <circle cx="160" cy="90" r="12" fill="#00ff88"/>
@@ -124,7 +123,7 @@
     </a>
 
     <!-- SNAKE -->
-    <a class="card" href="snake.html">
+    <a class="card" id="link-snake" href="snake.html">
       <div class="thumb" style="background:#080810;">
         <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
           <g stroke="rgba(255,255,255,0.03)" stroke-width="1">
@@ -136,33 +135,22 @@
             <line x1="200" y1="0" x2="200" y2="180"/><line x1="240" y1="0" x2="240" y2="180"/>
             <line x1="280" y1="0" x2="280" y2="180"/>
           </g>
-          <!-- snake body segments -->
-          <circle cx="200" cy="90" r="11" fill="#00c86e"/>
-          <circle cx="170" cy="90" r="11" fill="#00c86e"/>
-          <circle cx="140" cy="90" r="11" fill="#00c86e"/>
-          <circle cx="110" cy="90" r="11" fill="#00c86e"/>
-          <circle cx="110" cy="120" r="11" fill="#00c86e"/>
-          <circle cx="140" cy="120" r="11" fill="#00c86e"/>
+          <circle cx="200" cy="90" r="11" fill="#00c86e"/><circle cx="170" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="140" cy="90" r="11" fill="#00c86e"/><circle cx="110" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="110" cy="120" r="11" fill="#00c86e"/><circle cx="140" cy="120" r="11" fill="#00c86e"/>
           <circle cx="170" cy="120" r="11" fill="#00c86e"/>
-          <!-- head glow -->
           <circle cx="230" cy="90" r="15" fill="#00e87a" opacity="0.3"/>
-          <!-- head -->
           <circle cx="230" cy="90" r="12" fill="#00e87a"/>
-          <!-- eyes -->
-          <circle cx="235" cy="86" r="3" fill="#000"/>
-          <circle cx="235" cy="94" r="3" fill="#000"/>
-          <!-- food glow -->
+          <circle cx="235" cy="86" r="3" fill="#000"/><circle cx="235" cy="94" r="3" fill="#000"/>
           <circle cx="260" cy="45" r="14" fill="#ff4d6d" opacity="0.3"/>
-          <!-- food -->
           <circle cx="260" cy="45" r="9" fill="#ff4d6d"/>
-          <!-- power up star -->
           <polygon points="80,40 83,50 94,50 85,56 88,67 80,61 72,67 75,56 66,50 77,50" fill="#f39c12" opacity="0.9"/>
         </svg>
         <div class="badge new2">Nuevo</div>
       </div>
       <div class="card-body">
         <div class="card-title">Snake</div>
-        <div class="card-desc">Come manzanas para crecer. Recoge estrellas para ir más rápido. ¡No choques ni con las paredes ni contigo mismo!</div>
+        <div class="card-desc">Come manzanas para crecer. Recoge estrellas para ir más rápido. ¡No choques!</div>
         <div class="card-footer">
           <span class="tag">Clásico</span>
           <div class="play-arrow purple">▶</div>
@@ -172,7 +160,7 @@
 
     <!-- PRÓXIMAMENTE -->
     <div class="card soon-card">
-      <div class="thumb" style="background:#0f0f1a; font-size:52px; color:#333;">💣</div>
+      <div class="thumb" style="background:#0f0f1a; font-size:52px; color:#333; display:flex; align-items:center; justify-content:center;">💣</div>
       <div class="card-body">
         <div class="badge soon">Próximamente</div>
         <div class="card-title">Whack-a-Mole</div>
@@ -188,5 +176,13 @@
 </main>
 
 <footer>Hecho con ❤️ — Juegos web para todos los dispositivos</footer>
+
+<script>
+  // Añade timestamp a los enlaces para romper caché en cada visita
+  var v = '?v=' + Date.now();
+  document.getElementById('link-dodge').href = 'dodge-the-balls.html' + v;
+  document.getElementById('link-snake').href = 'snake.html' + v;
+</script>
+
 </body>
 </html>
