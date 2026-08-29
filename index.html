@@ -6,262 +6,63 @@
 <title>🎮 Mis Juegos</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
-
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --bg: #080810;
-    --surface: #10101e;
-    --card: #14142a;
-    --border: rgba(255,255,255,0.07);
-    --accent: #00e87a;
-    --accent2: #7c6aff;
-    --text: #f0f0f0;
-    --muted: #666;
+    --bg: #080810; --surface: #10101e; --card: #14142a;
+    --border: rgba(255,255,255,0.07); --accent: #00e87a; --accent2: #7c6aff;
+    --text: #f0f0f0; --muted: #666;
     --font: 'Space Grotesk', -apple-system, Arial, sans-serif;
   }
-
   html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* HEADER */
-  header {
-    padding: 60px 24px 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
+  header { padding: 60px 24px 40px; text-align: center; position: relative; overflow: hidden; }
   header::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: 50%;
-    transform: translateX(-50%);
+    content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
     width: 500px; height: 300px;
     background: radial-gradient(ellipse, rgba(124,106,255,0.18) 0%, transparent 70%);
     pointer-events: none;
   }
+  .eyebrow { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  h1 { font-size: clamp(32px, 7vw, 58px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; margin-bottom: 12px; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .subtitle { font-size: clamp(14px, 3vw, 17px); color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.6; }
 
-  .eyebrow {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  h1 {
-    font-size: clamp(32px, 7vw, 58px);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -1px;
-    margin-bottom: 12px;
-  }
-
-  h1 span {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .subtitle {
-    font-size: clamp(14px, 3vw, 17px);
-    color: var(--muted);
-    max-width: 420px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-
-  /* STATS BAR */
-  .stats {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin: 40px auto 0;
-    padding: 20px 32px;
-    max-width: 400px;
-    border: 0.5px solid var(--border);
-    border-radius: 50px;
-    background: var(--surface);
-  }
-
+  .stats { display: flex; justify-content: center; gap: 40px; margin: 40px auto 0; padding: 20px 32px; max-width: 400px; border: 0.5px solid var(--border); border-radius: 50px; background: var(--surface); }
   .stat { text-align: center; }
   .stat-num { font-size: 22px; font-weight: 700; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+  .divider { width: 100%; height: 0.5px; background: var(--border); margin: 48px 0 0; }
 
-  /* DIVIDER */
-  .divider {
-    width: 100%;
-    height: 0.5px;
-    background: var(--border);
-    margin: 48px 0 0;
-  }
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+  .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
 
-  /* GRID */
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
+  .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
-  .section-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
-
-  .games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  /* CARD */
-  .card {
-    background: var(--card);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-    position: relative;
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255,255,255,0.15);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-  }
-
+  .card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; position: relative; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
   .card:active { transform: translateY(-2px); }
 
-  /* THUMBNAIL */
-  .thumb {
-    width: 100%;
-    aspect-ratio: 16/9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 64px;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .thumb-dodge {
-    background: #0d0d1a;
-  }
-
-  /* SVG preview for dodge */
+  .thumb { width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; flex-shrink: 0; }
   .thumb svg { width: 100%; height: 100%; position: absolute; top:0; left:0; }
 
-  /* BADGE */
-  .badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: rgba(0,232,122,0.15);
-    color: var(--accent);
-    border: 0.5px solid rgba(0,232,122,0.3);
-  }
+  .badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(0,232,122,0.15); color: var(--accent); border: 0.5px solid rgba(0,232,122,0.3); }
+  .badge.new2 { background: rgba(124,106,255,0.15); color: #7c6aff; border-color: rgba(124,106,255,0.3); }
+  .badge.soon { background: rgba(255,255,255,0.05); color: var(--muted); border-color: var(--border); }
 
-  .badge.soon {
-    background: rgba(255,255,255,0.05);
-    color: var(--muted);
-    border-color: var(--border);
-  }
-
-  /* CARD BODY */
-  .card-body {
-    padding: 18px 20px 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .card-title {
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.55;
-    flex: 1;
-  }
-
-  .card-footer {
-    margin-top: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .tag {
-    font-size: 11px;
-    color: var(--muted);
-    background: rgba(255,255,255,0.05);
-    padding: 3px 9px;
-    border-radius: 20px;
-  }
-
-  .play-arrow {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    color: #000;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-    transition: transform 0.15s;
-  }
-
+  .card-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .card-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .card-desc { font-size: 13px; color: var(--muted); line-height: 1.55; flex: 1; }
+  .card-footer { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .tag { font-size: 11px; color: var(--muted); background: rgba(255,255,255,0.05); padding: 3px 9px; border-radius: 20px; }
+  .play-arrow { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #000; font-size: 13px; font-weight: 700; flex-shrink: 0; transition: transform 0.15s; }
+  .play-arrow.purple { background: #7c6aff; color: #fff; }
   .card:hover .play-arrow { transform: scale(1.12); }
 
-  /* COMING SOON CARD */
-  .card.soon-card {
-    opacity: 0.45;
-    pointer-events: none;
-  }
+  .card.soon-card { opacity: 0.4; pointer-events: none; }
 
-  .card.soon-card .play-arrow {
-    background: var(--muted);
-  }
+  footer { border-top: 0.5px solid var(--border); text-align: center; padding: 28px 24px; font-size: 13px; color: var(--muted); }
 
-  /* FOOTER */
-  footer {
-    border-top: 0.5px solid var(--border);
-    text-align: center;
-    padding: 28px 24px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  /* RESPONSIVE */
   @media (max-width: 480px) {
     .stats { gap: 24px; padding: 16px 20px; }
     .games-grid { grid-template-columns: 1fr; }
@@ -275,18 +76,9 @@
   <h1>Mis <span>Juegos</span></h1>
   <p class="subtitle">Juegos web para móvil y escritorio. Toca y juega, sin descargas ni registros.</p>
   <div class="stats">
-    <div class="stat">
-      <div class="stat-num" id="game-count">1</div>
-      <div class="stat-label">Juegos</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">📱</div>
-      <div class="stat-label">Mobile</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">🆓</div>
-      <div class="stat-label">Gratis</div>
-    </div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">Juegos</div></div>
+    <div class="stat"><div class="stat-num">📱</div><div class="stat-label">Mobile</div></div>
+    <div class="stat"><div class="stat-num">🆓</div><div class="stat-label">Gratis</div></div>
   </div>
   <div class="divider"></div>
 </header>
@@ -297,38 +89,29 @@
 
     <!-- DODGE THE BALLS -->
     <a class="card" href="dodge-the-balls.html">
-      <div class="thumb thumb-dodge">
+      <div class="thumb" style="background:#0d0d1a;">
         <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-          <!-- grid lines -->
           <g stroke="rgba(255,255,255,0.04)" stroke-width="1">
-            <line x1="0" y1="36" x2="320" y2="36"/>
-            <line x1="0" y1="72" x2="320" y2="72"/>
-            <line x1="0" y1="108" x2="320" y2="108"/>
-            <line x1="0" y1="144" x2="320" y2="144"/>
-            <line x1="64" y1="0" x2="64" y2="180"/>
-            <line x1="128" y1="0" x2="128" y2="180"/>
-            <line x1="192" y1="0" x2="192" y2="180"/>
-            <line x1="256" y1="0" x2="256" y2="180"/>
+            <line x1="0" y1="36" x2="320" y2="36"/><line x1="0" y1="72" x2="320" y2="72"/>
+            <line x1="0" y1="108" x2="320" y2="108"/><line x1="0" y1="144" x2="320" y2="144"/>
+            <line x1="64" y1="0" x2="64" y2="180"/><line x1="128" y1="0" x2="128" y2="180"/>
+            <line x1="192" y1="0" x2="192" y2="180"/><line x1="256" y1="0" x2="256" y2="180"/>
           </g>
-          <!-- glow blobs -->
-          <circle cx="80" cy="60" r="30" fill="#e74c3c" opacity="0.25"/>
-          <circle cx="240" cy="50" r="24" fill="#3498db" opacity="0.25"/>
-          <circle cx="60" cy="130" r="22" fill="#f39c12" opacity="0.25"/>
-          <circle cx="200" cy="140" r="28" fill="#9b59b6" opacity="0.25"/>
-          <circle cx="280" cy="100" r="20" fill="#1abc9c" opacity="0.25"/>
-          <!-- balls -->
+          <circle cx="80" cy="60" r="30" fill="#e74c3c" opacity="0.22"/>
+          <circle cx="240" cy="50" r="24" fill="#3498db" opacity="0.22"/>
+          <circle cx="60" cy="130" r="22" fill="#f39c12" opacity="0.22"/>
+          <circle cx="200" cy="140" r="28" fill="#9b59b6" opacity="0.22"/>
+          <circle cx="280" cy="100" r="20" fill="#1abc9c" opacity="0.22"/>
           <circle cx="80" cy="60" r="18" fill="#e74c3c"/>
           <circle cx="240" cy="50" r="15" fill="#3498db"/>
           <circle cx="60" cy="130" r="14" fill="#f39c12"/>
           <circle cx="200" cy="140" r="17" fill="#9b59b6"/>
           <circle cx="280" cy="100" r="13" fill="#1abc9c"/>
-          <!-- player glow -->
           <circle cx="160" cy="90" r="22" fill="#00ff88" opacity="0.2"/>
-          <!-- player -->
           <circle cx="160" cy="90" r="12" fill="#00ff88"/>
           <circle cx="160" cy="90" r="12" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
         </svg>
-        <div class="badge">Nuevo</div>
+        <div class="badge">Disponible</div>
       </div>
       <div class="card-body">
         <div class="card-title">Dodge the Balls</div>
@@ -340,30 +123,63 @@
       </div>
     </a>
 
-    <!-- PRÓXIMAMENTE 1 -->
-    <div class="card soon-card">
-      <div class="thumb" style="background:#0f0f1a; font-size:52px;">🐍</div>
+    <!-- SNAKE -->
+    <a class="card" href="snake.html">
+      <div class="thumb" style="background:#080810;">
+        <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="rgba(255,255,255,0.03)" stroke-width="1">
+            <line x1="0" y1="30" x2="320" y2="30"/><line x1="0" y1="60" x2="320" y2="60"/>
+            <line x1="0" y1="90" x2="320" y2="90"/><line x1="0" y1="120" x2="320" y2="120"/>
+            <line x1="0" y1="150" x2="320" y2="150"/>
+            <line x1="40" y1="0" x2="40" y2="180"/><line x1="80" y1="0" x2="80" y2="180"/>
+            <line x1="120" y1="0" x2="120" y2="180"/><line x1="160" y1="0" x2="160" y2="180"/>
+            <line x1="200" y1="0" x2="200" y2="180"/><line x1="240" y1="0" x2="240" y2="180"/>
+            <line x1="280" y1="0" x2="280" y2="180"/>
+          </g>
+          <!-- snake body segments -->
+          <circle cx="200" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="170" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="140" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="110" cy="90" r="11" fill="#00c86e"/>
+          <circle cx="110" cy="120" r="11" fill="#00c86e"/>
+          <circle cx="140" cy="120" r="11" fill="#00c86e"/>
+          <circle cx="170" cy="120" r="11" fill="#00c86e"/>
+          <!-- head glow -->
+          <circle cx="230" cy="90" r="15" fill="#00e87a" opacity="0.3"/>
+          <!-- head -->
+          <circle cx="230" cy="90" r="12" fill="#00e87a"/>
+          <!-- eyes -->
+          <circle cx="235" cy="86" r="3" fill="#000"/>
+          <circle cx="235" cy="94" r="3" fill="#000"/>
+          <!-- food glow -->
+          <circle cx="260" cy="45" r="14" fill="#ff4d6d" opacity="0.3"/>
+          <!-- food -->
+          <circle cx="260" cy="45" r="9" fill="#ff4d6d"/>
+          <!-- power up star -->
+          <polygon points="80,40 83,50 94,50 85,56 88,67 80,61 72,67 75,56 66,50 77,50" fill="#f39c12" opacity="0.9"/>
+        </svg>
+        <div class="badge new2">Nuevo</div>
+      </div>
       <div class="card-body">
-        <div class="badge soon">Próximamente</div>
         <div class="card-title">Snake</div>
-        <div class="card-desc">La serpiente clásica con power-ups y niveles de velocidad.</div>
+        <div class="card-desc">Come manzanas para crecer. Recoge estrellas para ir más rápido. ¡No choques ni con las paredes ni contigo mismo!</div>
         <div class="card-footer">
           <span class="tag">Clásico</span>
-          <div class="play-arrow" style="background:#333">▶</div>
+          <div class="play-arrow purple">▶</div>
         </div>
       </div>
-    </div>
+    </a>
 
-    <!-- PRÓXIMAMENTE 2 -->
+    <!-- PRÓXIMAMENTE -->
     <div class="card soon-card">
-      <div class="thumb" style="background:#0f0f1a; font-size:52px;">💣</div>
+      <div class="thumb" style="background:#0f0f1a; font-size:52px; color:#333;">💣</div>
       <div class="card-body">
         <div class="badge soon">Próximamente</div>
         <div class="card-title">Whack-a-Mole</div>
         <div class="card-desc">Golpea los topos antes de que desaparezcan. ¿Cuántos puedes atrapar?</div>
         <div class="card-footer">
           <span class="tag">Velocidad</span>
-          <div class="play-arrow" style="background:#333">▶</div>
+          <div class="play-arrow" style="background:#222; color:#555;">▶</div>
         </div>
       </div>
     </div>
@@ -371,9 +187,6 @@
   </div>
 </main>
 
-<footer>
-  Hecho con ❤️ — Juegos web para todos los dispositivos
-</footer>
-
+<footer>Hecho con ❤️ — Juegos web para todos los dispositivos</footer>
 </body>
 </html>
