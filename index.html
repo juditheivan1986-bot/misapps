@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Dodge the Balls</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #0d0d1a;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    touch-action: none;
+  }
+  #app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 0);
+  }
+  #hud {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+    font-size: clamp(12px, 3.5vw, 16px);
+    color: #aaa;
+    user-select: none;
+    z-index: 10;
+  }
+  #hud b { color: #fff; }
+  #wrap {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    flex: 1;
+    max-height: 80vh;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 1.5px solid #333;
+    border-radius: 12px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13,13,26,0.88);
+    border-radius: 12px;
+    text-align: center;
+    padding: 20px;
+    gap: 12px;
+    z-index: 20;
+    pointer-events: all;
+  }
+  #overlay h2 { font-size: clamp(20px, 6vw, 30px); color: #fff; font-weight: 700; }
+  #overlay p { font-size: clamp(13px, 3.5vw, 16px); color: #aaa; line-height: 1.5; max-width: 260px; }
+  .score-line { font-size: clamp(15px, 4vw, 18px); color: #f39c12; font-weight: 600; }
+  #play-btn {
+    margin-top: 10px;
+    background: #00c86e;
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    font-size: clamp(15px, 4.5vw, 19px);
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: 0 0 24px rgba(0,200,110,0.45);
+    z-index: 30;
+    position: relative;
+    touch-action: manipulation;
+  }
+  #play-btn:active { opacity: 0.85; transform: scale(0.96); }
+  #tip {
+    margin-top: 8px;
+    font-size: clamp(11px, 2.5vw, 13px);
+    color: #444;
+    user-select: none;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hud">
+    <span>⏱ <b id="t">0</b>s</span>
+    <span>🏆 <b id="r">0</b>s</span>
+    <span>⚫ <b id="n">0</b></span>
+  </div>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+    <div id="overlay">
+      <h2 id="o-title">🎮 Dodge the Balls</h2>
+      <p id="o-desc">Mueve el dedo (o ratón) para esquivar las bolas.<br>¡Sobrevive el máximo tiempo posible!</p>
+      <div id="o-score" class="score-line" style="display:none"></div>
+      <button id="play-btn">¡Jugar!</button>
+    </div>
+  </div>
+  <div id="tip">Toca y arrastra para moverte</div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('c');
+  var ctx = canvas.getContext('2d');
+  var wrap = document.getElementById('wrap');
+  var overlay = document.getElementById('overlay');
+  var oTitle = document.getElementById('o-title');
+  var oDesc = document.getElementById('o-desc');
+  var oScore = document.getElementById('o-score');
+  var tEl = document.getElementById('t');
+  var rEl = document.getElementById('r');
+  var nEl = document.getElementById('n');
+  var btn = document.getElementById('play-btn');
+
+  var W = 0, H = 0, dpr = 1;
+  var player = { x: 0, y: 0, r: 12 };
+  var target = { x: 0, y: 0 };
+  var balls = [];
+  var running = false;
+  var startTime = 0, elapsed = 0, best = 0;
+  var raf, addTimer;
+
+  var COLORS = ['#e74c3c','#3498db','#f39c12','#9b59b6','#1abc9c','#e67e22','#ff6b9d','#00bcd4'];
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    W = Math.floor(rect.width);
+    H = Math.floor(rect.height);
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    player.r = Math.max(9, Math.min(15, W * 0.025));
+    if (!running) {
+      player.x = W / 2; player.y = H / 2;
+      target.x = W / 2; target.y = H / 2;
+      drawBg();
+    }
+  }
+
+  function randomBall() {
+    var r = Math.max(12, Math.min(24, W * 0.038 + Math.random() * W * 0.018));
+    var speed = (1.8 + balls.length * 0.1) * (W / 360);
+    var x, y, side = Math.floor(Math.random() * 4);
+    if (side === 0) { x = Math.random() * W; y = -r; }
+    else if (side === 1) { x = W + r; y = Math.random() * H; }
+    else if (side === 2) { x = Math.random() * W; y = H + r; }
+    else { x = -r; y = Math.random() * H; }
+    var ang = Math.atan2(H / 2 - y, W / 2 - x) + (Math.random() - 0.5) * 1.0;
+    return { x: x, y: y, r: r, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, color: COLORS[Math.floor(Math.random() * COLORS.length)] };
+  }
+
+  function startGame() {
+    balls = [];
+    for (var i = 0; i < 3; i++) balls.push(randomBall());
+    player.x = W / 2; player.y = H / 2;
+    target.x = W / 2; target.y = H / 2;
+    running = true;
+    startTime = Date.now();
+    overlay.style.display = 'none';
+    clearInterval(addTimer);
+    addTimer = setInterval(function() {
+      if (running) balls.push(randomBall());
+    }, 2500);
+    cancelAnimationFrame(raf);
+    loop();
+  }
+
+  function gameOver() {
+    running = false;
+    clearInterval(addTimer);
+    cancelAnimationFrame(raf);
+    elapsed = Math.floor((Date.now() - startTime) / 1000);
+    if (elapsed > best) best = elapsed;
+    rEl.textContent = best;
+    oTitle.textContent = '💥 ¡Game Over!';
+    oDesc.textContent = '';
+    oScore.style.display = 'block';
+    oScore.textContent = 'Sobreviviste ' + elapsed + 's  |  Récord: ' + best + 's';
+    btn.textContent = '¡Reintentar!';
+    overlay.style.display = 'flex';
+  }
+
+  function drawBg() {
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx <= W; gx += 36) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 0; gy <= H; gy += 36) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+  }
+
+  function loop() {
+    if (!running) return;
+    tEl.textContent = Math.floor((Date.now() - startTime) / 1000);
+    nEl.textContent = balls.length;
+
+    player.x += (target.x - player.x) * 0.22;
+    player.y += (target.y - player.y) * 0.22;
+    player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+    player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+
+    drawBg();
+
+    for (var i = 0; i < balls.length; i++) {
+      var b = balls[i];
+      b.x += b.vx; b.y += b.vy;
+      if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx); }
+      if (b.x + b.r > W) { b.x = W - b.r; b.vx = -Math.abs(b.vx); }
+      if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy); }
+      if (b.y + b.r > H) { b.y = H - b.r; b.vy = -Math.abs(b.vy); }
+
+      ctx.save();
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.fillStyle = b.color;
+      ctx.fill();
+      ctx.restore();
+
+      var dx = b.x - player.x, dy = b.y - player.y;
+      if (Math.sqrt(dx * dx + dy * dy) < b.r + player.r - 2) { gameOver(); return; }
+    }
+
+    ctx.save();
+    ctx.shadowColor = '#00ff88';
+    ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#00ff88';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    raf = requestAnimationFrame(loop);
+  }
+
+  // Botón — click y touchend para iPhone
+  btn.addEventListener('click', function(e) { e.stopPropagation(); startGame(); });
+  btn.addEventListener('touchend', function(e) { e.preventDefault(); e.stopPropagation(); startGame(); }, { passive: false });
+
+  // Movimiento ratón — solo cuando juega
+  canvas.addEventListener('mousemove', function(e) {
+    if (!running) return;
+    var rect = canvas.getBoundingClientRect();
+    target.x = (e.clientX - rect.left) * (W / rect.width);
+    target.y = (e.clientY - rect.top) * (H / rect.height);
+  });
+
+  // Toque — canvas solo recibe eventos cuando está jugando
+  function onTouch(e) {
+    if (!running) return;
+    e.preventDefault();
+    var rect = canvas.getBoundingClientRect();
+    var t = e.touches[0];
+    target.x = (t.clientX - rect.left) * (W / rect.width);
+    target.y = (t.clientY - rect.top) * (H / rect.height);
+  }
+  canvas.addEventListener('touchstart', onTouch, { passive: false });
+  canvas.addEventListener('touchmove', onTouch, { passive: false });
+
+  window.addEventListener('resize', function() { resize(); });
+  window.addEventListener('orientationchange', function() { setTimeout(resize, 300); });
+
+  resize();
+})();
+</script>
+</body>
+</html>
